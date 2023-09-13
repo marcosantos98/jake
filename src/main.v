@@ -103,7 +103,7 @@ fn print_usage() {
 	println('\t\t-v: Print the version.')
 }
 
-fn build_project(run bool) {
+fn build_project(run bool, args []string) {
 	data := os.read_file('./jakefile.json') or {
 		eprintln("Couldn't read jakefile in root folder.")
 		exit(1)
@@ -132,7 +132,12 @@ fn build_project(run bool) {
 
 	if run {
 		println('==========Running jar ${jake_proj.jar_name}==========')
-		out, rc := exec('java -jar ${jake_proj.jar_name}', '.')
+		mut jar_args := ''
+		for arg in args {
+			jar_args += '${arg} '
+		}
+
+		out, rc := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
 		if rc > 0 && out != '' {
 			panic(out)
 		} else if out != '' {
@@ -141,13 +146,31 @@ fn build_project(run bool) {
 	}
 }
 
+fn collect_args() []string {
+	mut args := []string{}
+	if os.args.len > 2 {
+		for i in 2 .. os.args.len {
+			args << os.args[i]
+		}
+	}
+	return args
+}
+
 fn main() {
-	if os.args.len == 2 {
+	if os.args.len >= 2 {
 		match os.args[1] {
-			'-b' { build_project(false) }
-			'-br' { build_project(true) }
-			'-v' { println('jake 0.0.1') }
-			else { print_usage() }
+			'-b' {
+				build_project(false, [])
+			}
+			'-br' {
+				build_project(true, collect_args())
+			}
+			'-v' {
+				println('jake 0.0.1')
+			}
+			else {
+				print_usage()
+			}
 		}
 	} else {
 		print_usage()
@@ -162,4 +185,3 @@ fn main() {
 // 	- Fat jar support.
 //	- Check for existance of javac and jar.
 //	- Add option to remove verbose output.
-// 	- Add support for the jar command line args
