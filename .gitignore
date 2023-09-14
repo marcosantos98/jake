@@ -16,12 +16,6 @@ bin/
 .vscode/
 *.iml
 
-# ENV
-.env
-
-# vweb and database
-*.db
-*.js
-
 example/build
 example/*.jar
+jakebugs.txt
