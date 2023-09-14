@@ -61,7 +61,8 @@ fn java_compile_srcs(jake JakeProject) {
 	for source in jake.sources {
 		built_source := source.replace(jake.src_dir_path, jake.build_dir_path).replace('.java',
 			'.class')
-		if os.file_last_mod_unix(source) > os.file_last_mod_unix(built_source) {
+		if !os.exists(built_source)
+			|| os.file_last_mod_unix(source) > os.file_last_mod_unix(built_source) {
 			sources += ' ${source}'
 		}
 	}
