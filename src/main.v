@@ -46,9 +46,6 @@ fn exec(cmd string, workind_dir string) (string, int) {
 	p.wait()
 	if p.code > 0 {
 		rc = 1
-		println('ERROR:')
-		println(cmd2)
-		print(out)
 	}
 
 	return out, rc
@@ -78,12 +75,8 @@ fn java_compile_srcs(jake JakeProject) {
 
 	println('> Compile java files with javac:\n\t${cmd}')
 
-	out, rc := exec(cmd, '.')
-	if rc > 0 && out != '' {
-		panic(out)
-	} else if out != '' {
-		println(out)
-	}
+	out, _ := exec(cmd, '.')
+	print(out)
 }
 
 fn java_create_jar(jake JakeProject) {
@@ -95,12 +88,8 @@ fn java_create_jar(jake JakeProject) {
 
 	cmd := 'jar ${options}'
 	println('> Creating jar file ${jake.jar_name}:\n\t${cmd}')
-	out, rc := exec(cmd, jake.build_dir_path)
-	if rc > 0 && out != '' {
-		panic(out)
-	} else if out != '' {
-		println(out)
-	}
+	out, _ := exec(cmd, jake.build_dir_path)
+	print(out)
 }
 
 fn print_usage() {
@@ -141,12 +130,8 @@ fn build_project(run bool, args []string) {
 			jar_args += '${arg} '
 		}
 
-		out, rc := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
-		if rc > 0 && out != '' {
-			panic(out)
-		} else if out != '' {
-			println(out)
-		}
+		out, _ := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
+		print(out)
 	}
 }
 
