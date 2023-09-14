@@ -59,13 +59,22 @@ fn java_compile_srcs(jake JakeProject) {
 		exit(1)
 	}
 
-	mut options := '-d ${jake.build_dir_path}'
-
+	mut options := '-cp ${jake.build_dir_path} -d ${jake.build_dir_path}'
+	mut sources := ''
 	for source in jake.sources {
-		options += ' ${source}'
+		built_source := source.replace(jake.src_dir_path, jake.build_dir_path).replace('.java',
+			'.class')
+		if os.file_last_mod_unix(source) > os.file_last_mod_unix(built_source) {
+			sources += ' ${source}'
+		}
 	}
 
-	cmd := 'javac ${options}'
+	if sources == '' {
+		println('> Nothing to build.')
+		return
+	}
+
+	cmd := 'javac ${options} ${sources}'
 
 	println('> Compile java files with javac:\n\t${cmd}')
 
@@ -116,11 +125,6 @@ fn build_project(run bool, args []string) {
 	jake_proj.sources = os.walk_ext(jake_proj.src_dir_path, 'java')
 	jake_proj.pwd = os.getwd()
 	jake_proj.jar_name = '${jake_proj.name}-${jake_proj.version}.jar'
-
-	os.rmdir_all(jake_proj.build_dir_path) or {
-		eprintln("Couldn't delete build folder and all the content inside it. ERR: ${err}")
-		exit(1)
-	}
 
 	java_compile_srcs(jake_proj)
 	java_create_jar(jake_proj)
@@ -180,7 +184,6 @@ fn main() {
 
 // TODO:
 //	- Add include folders and files with filter options like "*".
-//	- Don't delete build folder evertime. Check if file was modified before rebuild it.
 //	- Add external libraries and local libraries.
 // 	- Fat jar support.
 //	- Check for existance of javac and jar.
