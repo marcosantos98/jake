@@ -99,10 +99,11 @@ fn print_usage() {
 	println('\tOptions:')
 	println('\t\t-b: Only build.')
 	println('\t\t-br: Build and run the jar program.')
+	println('\t\t-r: Run the jar program.')
 	println('\t\t-v: Print the version.')
 }
 
-fn build_project(run bool, args []string) {
+fn load_project() JakeProject {
 	data := os.read_file('./jakefile.json') or {
 		eprintln("Couldn't read jakefile in root folder.")
 		exit(1)
@@ -111,10 +112,15 @@ fn build_project(run bool, args []string) {
 		eprintln('> Failed to load project! ERROR: ${err}')
 		exit(1)
 	}
-
 	jake_proj.sources = os.walk_ext(jake_proj.src_dir_path, 'java')
 	jake_proj.pwd = os.getwd()
 	jake_proj.jar_name = '${jake_proj.name}-${jake_proj.version}.jar'
+
+	return jake_proj
+}
+
+fn build_project(run bool, args []string) {
+	mut jake_proj := load_project()
 
 	java_compile_srcs(jake_proj)
 	java_create_jar(jake_proj)
@@ -126,14 +132,18 @@ fn build_project(run bool, args []string) {
 
 	if run {
 		println('==========Running jar ${jake_proj.jar_name}==========')
-		mut jar_args := ''
-		for arg in args {
-			jar_args += '${arg} '
-		}
-
-		out, _ := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
-		print(out)
+		run_project(jake_proj, args)
 	}
+}
+
+fn run_project(jake_proj JakeProject, args []string) {
+	mut jar_args := ''
+	for arg in args {
+		jar_args += '${arg} '
+	}
+
+	out, _ := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
+	print(out)
 }
 
 fn collect_args() []string {
@@ -154,6 +164,10 @@ fn main() {
 			}
 			'-br' {
 				build_project(true, collect_args())
+			}
+			'-r' {
+				jake := load_project()
+				run_project(jake, collect_args())
 			}
 			'-v' {
 				println('jake 0.0.1')
