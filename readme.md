@@ -36,3 +36,4 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 - Run the final jar with `jake -br`
   - Can also specify args for the final jar with `jake -br [args]`
 - Only build source files that have been recently modified.
+- External library support. (Only local libraries for now)
