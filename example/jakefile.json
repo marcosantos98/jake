@@ -3,5 +3,6 @@
     "version": "1.0.0",
     "src_dir_path": "./src",
     "build_dir_path": "./build",
+    "libs_dir_path": "./libs",
     "entry_point": "marco.test.Main"
 }
