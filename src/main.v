@@ -210,3 +210,4 @@ fn main() {
 // 	- Fat jar support.
 //	- Check for existance of javac and jar.
 //	- Add option to remove verbose output.
+//	- Add option to set the test entrypoint
