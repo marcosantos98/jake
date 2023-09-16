@@ -8,11 +8,13 @@ struct JakeProject {
 	version        string [required]
 	src_dir_path   string [required]
 	build_dir_path string [required]
+	libs_dir_path  string [required]
 	entry_point    string
 mut:
-	sources  []string
-	pwd      string
-	jar_name string
+	sources  []string [skip]
+	libs     []string [skip]
+	pwd      string   [skip]
+	jar_name string   [skip]
 }
 
 // Kinda copied and pasted from https://github.com/vlang/v/blob/master/examples/process/process_stdin_trick.v
@@ -56,7 +58,13 @@ fn java_compile_srcs(jake JakeProject) {
 		exit(1)
 	}
 
-	mut options := '-cp ${jake.build_dir_path} -d ${jake.build_dir_path}'
+	mut classpath := '-cp ${jake.build_dir_path}'
+
+	for lib in jake.libs {
+		classpath += ':${lib}'
+	}
+
+	mut options := '${classpath} -d ${jake.build_dir_path}'
 	mut sources := ''
 	for source in jake.sources {
 		built_source := source.replace(jake.src_dir_path, jake.build_dir_path).replace('.java',
@@ -113,6 +121,7 @@ fn load_project() JakeProject {
 		exit(1)
 	}
 	jake_proj.sources = os.walk_ext(jake_proj.src_dir_path, 'java')
+	jake_proj.libs = os.walk_ext(jake_proj.libs_dir_path, 'jar')
 	jake_proj.pwd = os.getwd()
 	jake_proj.jar_name = '${jake_proj.name}-${jake_proj.version}.jar'
 
@@ -142,7 +151,21 @@ fn run_project(jake_proj JakeProject, args []string) {
 		jar_args += '${arg} '
 	}
 
-	out, _ := exec('java -jar ${jake_proj.jar_name} ${jar_args}', '.')
+	mut cmd := 'java '
+
+	if jake_proj.libs.len > 0 {
+		cmd += '-cp .'
+		for lib in jake_proj.libs {
+			cmd += ':${lib}'
+		}
+		cmd += ':${jake_proj.jar_name} ${jake_proj.entry_point} ${jar_args}'
+	} else {
+		cmd += '-jar ${jake_proj.jar_name} ${jar_args}'
+	}
+
+	println('> ${cmd}')
+
+	out, _ := exec(cmd, '.')
 	print(out)
 }
 
@@ -184,7 +207,6 @@ fn main() {
 
 // TODO:
 //	- Add include folders and files with filter options like "*".
-//	- Add external libraries and local libraries.
 // 	- Fat jar support.
 //	- Check for existance of javac and jar.
 //	- Add option to remove verbose output.
