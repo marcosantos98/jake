@@ -84,8 +84,12 @@ fn java_compile_srcs(jake JakeProject) {
 
 	println('> Compile java files with javac:\n\t${cmd}')
 
-	out, _ := exec(cmd, '.')
+	out, rc := exec(cmd, '.')
 	print(out)
+	if rc != 0 {
+		eprintln('> Failed compilation step.')
+		exit(rc)
+	}
 }
 
 fn java_create_jar(jake JakeProject) {
