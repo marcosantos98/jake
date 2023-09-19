@@ -17,5 +17,6 @@ bin/
 *.iml
 
 example/build
+example/.cache
 example/*.jar
 jakebugs.txt
