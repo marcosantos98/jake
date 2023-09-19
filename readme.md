@@ -37,3 +37,20 @@ Check the end of `main.v` to know what is planned to be added to the project in 
   - Can also specify args for the final jar with `jake -br [args]`
 - Only build source files that have been recently modified.
 - External library support. (Only local libraries for now)
+- Support for tests with JUnit `jake -bt` or `jake -t`
+
+## Testing Java:
+
+Currently `jake` has an option called `include_testing` that setups JUnit as the test framework. You also need to specify the test class as package paths like `marco.test.Main`.
+
+```json
+{
+  ...
+  "include_testing" : true,
+  "tests": [
+    "marco.test.Main"
+  ]
+}
+```
+
+After the setup you can run `jake -t` to run all the tests or `jake -bt` to rebuild and run the tests.
