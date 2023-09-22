@@ -1,5 +1,4 @@
 # Binaries for programs and plugins
-main
 jake
 *.exe
 *.exe~
@@ -17,5 +16,6 @@ bin/
 *.iml
 
 example/build
+example/.cache
 example/*.jar
 jakebugs.txt
