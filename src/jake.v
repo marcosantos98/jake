@@ -87,20 +87,20 @@ fn setup_testing(jk utils.JakeProject) {
 }
 
 pub fn build_project(run bool, args []string) {
-	//1. Load project
+	// 1. Load project
 	mut jake_proj := load_project()
 
-	//2. Do java stuff
+	// 2. Do java stuff
 	java.compile_srcs(jake_proj)
 	java.create_jar(jake_proj)
 
-	//3. Move the built jar to the project root directory
+	// 3. Move the built jar to the project root directory
 	os.mv('${jake_proj.build_dir_path}/${jake_proj.jar_name}', '.') or {
 		eprintln("Couldn't move final jar from build folder to the root of the project. ERR: ${err}")
 		exit(1)
 	}
 
-	//4. Run the project if necessary
+	// 4. Run the project if necessary
 	if run {
 		println('==========Running jar ${jake_proj.jar_name}==========')
 		run_project(jake_proj, args)
@@ -108,20 +108,19 @@ pub fn build_project(run bool, args []string) {
 }
 
 pub fn build_and_run_project_tests() {
-
-	//1. Load project
+	// 1. Load project
 	mut jake_proj := load_project()
 
-	//2. Check if project includes testing
+	// 2. Check if project includes testing
 	if !jake_proj.include_testing {
 		eprintln('> Jake option `include_testing` is false. Change it to true to include testing framework.')
 		exit(1)
 	}
 
-	//3. Compile the tests
+	// 3. Compile the tests
 	java.compile_tests(jake_proj)
 
-	//4. Run them
+	// 4. Run them
 	println('=========Running tests==============================')
 	run_tests(jake_proj)
 }

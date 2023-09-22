@@ -77,7 +77,7 @@ pub fn compile_tests(jake utils.JakeProject) {
 pub fn create_jar(jake utils.JakeProject) {
 	// 1. Cleanup old .class files that don't exist in .java form.
 	for built_source in os.walk_ext(jake.build_dir_path, 'class') {
-		//fixme 23/09/22: This makes the jar include Inner class files even if the main source doesn't exist
+		// fixme 23/09/22: This makes the jar include Inner class files even if the main source doesn't exist
 		if built_source.contains('$') {
 			continue
 		}
