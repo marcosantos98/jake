@@ -58,5 +58,4 @@ fn main() {
 //	- Add option to remove verbose output.
 //  - Include more documentation in code.
 //  - Improve command generation
-//  - Improve logging
 //  - Fix Inner class not being deleted if not needed

@@ -1,6 +1,7 @@
 module utils
 
 import os
+import term
 
 pub struct JakeProject {
 pub:
@@ -70,4 +71,12 @@ pub fn make_dir(name string) {
 			exit(1)
 		}
 	}
+}
+
+pub fn log(msg string) {
+	println(term.bright_green(msg))
+}
+
+pub fn log_error(msg string) {
+	eprintln(term.bright_red(msg))
 }
