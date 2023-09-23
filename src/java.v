@@ -1,7 +1,8 @@
 module java
 
 import os
-import utils
+import term { reset }
+import utils { log, log_error }
 
 pub fn compile_srcs(jake utils.JakeProject) {
 	mut classpath := '-cp ${jake.build_dir_path}'
@@ -29,12 +30,13 @@ pub fn compile_srcs(jake utils.JakeProject) {
 	options := '${classpath} -d ${jake.build_dir_path}'
 	cmd := 'javac ${options} ${sources}'
 
-	println('> Compile java files with javac:\n\t${cmd}')
+	log('> Compile java files with javac:')
+	println(reset('\t${cmd}'))
 
 	res := os.execute(cmd)
 	print(res.output)
 	if res.exit_code != 0 {
-		eprintln('> Failed compilation step.')
+		log_error('> Failed compilation step.')
 		exit(res.exit_code)
 	}
 }
@@ -64,12 +66,12 @@ pub fn compile_tests(jake utils.JakeProject) {
 	options := '${classpath} -d ${jake.build_tests_dir_path}'
 	cmd := 'javac ${options} ${sources}'
 
-	println('> Compile java test files with javac:\n\t${cmd}')
-
+	log('> Compile java test files with javac:')
+	println(reset('\t${cmd}'))
 	res := os.execute(cmd)
 	print(res.output)
 	if res.exit_code != 0 {
-		eprintln('> Failed compilation step.')
+		log_error('> Failed compilation step.')
 		exit(res.exit_code)
 	}
 }
@@ -96,7 +98,8 @@ pub fn create_jar(jake utils.JakeProject) {
 
 	// 3. Call exec with the generated command: jar ${options}
 	cmd := 'jar ${options}'
-	println('> Creating jar file ${jake.jar_name}:\n\t${cmd}')
+	log('> Creating jar file ${jake.jar_name}:')
+	println(reset('\t${cmd}'))
 	out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
 	print(out)
 }
