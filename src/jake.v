@@ -2,11 +2,17 @@ module jake
 
 import os
 import json
-import utils { log, log_error }
+import utils { check_tool, log, log_error }
 import java
 
 pub fn load_project() utils.JakeProject {
-	// 1. Decode jakefile.json present where the jake bin was called
+	// 1. Check for existance of certain tools like java, jar, javac and wget
+	check_tool('java')
+	check_tool('jar')
+	check_tool('javac')
+	check_tool('wget')
+
+	// 2. Decode jakefile.json present where the jake bin was called
 	mut jake_proj := json.decode(utils.JakeProject, os.read_file('./jakefile.json') or {
 		log_error("Couldn't read jakefile in root folder.")
 		exit(1)
@@ -15,7 +21,7 @@ pub fn load_project() utils.JakeProject {
 		exit(1)
 	}
 
-	// 2. Try to create the folder structure
+	// 3. Try to create the folder structure
 	utils.make_dir('build')
 	utils.make_dir('build/main')
 	utils.make_dir('.cache')
@@ -27,7 +33,7 @@ pub fn load_project() utils.JakeProject {
 		utils.make_dir('src/tests')
 	}
 
-	// 3. Populate the struct
+	// 4. Populate the struct
 	jake_proj.pwd = os.getwd()
 	jake_proj.src_dir_path = './src/main'
 	jake_proj.tests_dir_path = './src/tests'
@@ -38,7 +44,7 @@ pub fn load_project() utils.JakeProject {
 	jake_proj.sources = os.walk_ext(jake_proj.src_dir_path, 'java')
 	jake_proj.libs = os.walk_ext(jake_proj.libs_dir_path, 'jar')
 
-	// 4. Check if the project has tests enabled, and then setup for testing
+	// 5. Check if the project has tests enabled, and then setup for testing
 	if jake_proj.include_testing {
 		jake_proj.tests = os.walk_ext(jake_proj.tests_dir_path, 'java')
 		setup_testing(jake_proj)
