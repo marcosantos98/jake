@@ -1,9 +1,9 @@
 module jake
 
-import os
-import json
-import utils { check_tool, log, log_error }
 import java
+import json
+import os
+import utils { check_tool, log, log_error }
 
 pub fn load_project() utils.JakeProject {
 	// 1. Check for existance of certain tools like java, jar, javac and wget
@@ -57,18 +57,7 @@ fn setup_testing(jk utils.JakeProject) {
 	hamcrest_url := 'https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${utils.hamcrest_version}/hamcrest-core-${utils.hamcrest_version}.jar'
 	junit_url := 'https://repo1.maven.org/maven2/junit/junit/${utils.junit_version}/junit-${utils.junit_version}.jar'
 
-	// 1. Check for existance of wget
-	// fixme 23/09/19:
-	// - /dev/null: Only checking for unix systems
-	//				Use > NUL for windows.
-	// - wget: Only unix systems has wget by default.
-	// 	 	   From windows10+, microsoft include support for curl, this can be a option.			
-	if os.system('wget --version > /dev/null 2>&1') != 0 {
-		log_error("> wget doesn't exist! jake relies on wget to download the necessary libraries.")
-		exit(1)
-	}
-
-	// 2. Check for existance of junit and hamcrest and downloaded them if needed.
+	// 1. Check for existance of junit and hamcrest and downloaded them if needed.
 	if !os.exists('${jk.pwd}/.cache/junit-${utils.junit_version}.jar') {
 		log('> JUnit not found. Downloading junit-${utils.junit_version}...')
 		out, rc := utils.execute_in_dir('wget -q ${junit_url}', '${jk.pwd}/.cache/')
@@ -92,7 +81,7 @@ fn setup_testing(jk utils.JakeProject) {
 	}
 }
 
-pub fn build_project(run bool, args []string) {
+pub fn build_project(run bool, args string) {
 	// 1. Load project
 	mut jake_proj := load_project()
 
@@ -129,26 +118,25 @@ pub fn build_and_run_project_tests() {
 	run_tests(jake_proj)
 }
 
-pub fn run_project(jake_proj utils.JakeProject, args []string) {
-	mut jar_args := ''
-	for arg in args {
-		jar_args += '${arg} '
-	}
-
+pub fn run_project(jake_proj utils.JakeProject, args string) {
 	mut cmd := 'java '
 
+	// 1. Construct classpath
 	if jake_proj.libs.len > 0 {
 		cmd += '-cp .'
 		for lib in jake_proj.libs {
 			cmd += ':${lib}'
 		}
-		cmd += ':${jake_proj.jar_name} ${jake_proj.entry_point} ${jar_args}'
+		cmd += ':${jake_proj.jar_name} ${jake_proj.entry_point} ${args}'
 	} else {
-		cmd += '-jar ${jake_proj.jar_name} ${jar_args}'
+		cmd += '-jar ${jake_proj.jar_name} ${args}'
 	}
 
 	log('> ${cmd}')
 
+	// 2. Exec command and print output.
+	// fixme 23/10/05: Should this use a child process?
+	//				We don't really need to have the execution after the user runs the compiled program.
 	res := os.execute(cmd)
 	print(res.output)
 	if res.exit_code != 0 {
@@ -158,6 +146,7 @@ pub fn run_project(jake_proj utils.JakeProject, args []string) {
 }
 
 fn run_tests(jk utils.JakeProject) {
+	// 1. Check if project has testing enabled
 	if !jk.include_testing {
 		log_error('> Jake option `include_testing` is false. Change it to true to include testing framework.')
 		exit(1)
@@ -165,6 +154,7 @@ fn run_tests(jk utils.JakeProject) {
 
 	mut cmd := 'java -cp .:${jk.build_tests_dir_path}'
 
+	// 2 . Contruct classpath
 	for lib in jk.libs {
 		cmd += ':${lib}'
 	}
@@ -173,6 +163,7 @@ fn run_tests(jk utils.JakeProject) {
 
 	cmd += ':${jk.jar_name} org.junit.runner.JUnitCore '
 
+	// 3 . Collect tests
 	for test in jk.tests {
 		classpath := test.replace('${jk.tests_dir_path}/', '').replace('/', '.').replace('.java',
 			'')
@@ -181,6 +172,7 @@ fn run_tests(jk utils.JakeProject) {
 
 	log('> ${cmd}')
 
+	// 4 . Exec command
 	res := os.execute(cmd)
 	print(res.output)
 	if res.exit_code > 0 {
