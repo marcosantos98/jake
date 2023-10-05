@@ -73,6 +73,19 @@ pub fn make_dir(name string) {
 	}
 }
 
+pub fn check_tool(tool string) {
+	// 1. Check for existance of wget
+	// fixme 23/09/19:
+	// - /dev/null: Only checking for unix systems
+	//				Use > NUL for windows.
+	// - wget: Only unix systems has wget by default.
+	// 	 	   From windows10+, microsoft include support for curl, this can be a option.			
+	if os.system('${tool} --version > /dev/null 2>&1') != 0 {
+		log_error("> ${tool} doesn't exist! jake needs ${tool} to work.")
+		exit(1)
+	}
+}
+
 pub fn log(msg string) {
 	println(term.bright_green(msg))
 }
