@@ -54,7 +54,6 @@ fn main() {
 // TODO:
 //	- Add include folders and files with filter options like "*".
 // 	- Fat jar support.
-//	- Check for existance of javac and jar.
 //	- Add option to remove verbose output.
 //  - Include more documentation in code.
 //  - Improve command generation
