@@ -1,7 +1,7 @@
 module main
 
-import os
 import jake
+import os
 
 fn print_usage() {
 	println('Usage:')
@@ -13,11 +13,11 @@ fn print_usage() {
 	println('\t\t-v: Print the version.')
 }
 
-fn collect_args() []string {
-	mut args := []string{}
+fn collect_args() string {
+	mut args := ''
 	if os.args.len > 2 {
 		for i in 2 .. os.args.len {
-			args << os.args[i]
+			args += '${os.args[i]} '
 		}
 	}
 	return args
@@ -47,7 +47,7 @@ fn main() {
 			}
 		}
 	} else {
-		jake.build_project(false, [])
+		jake.build_project(false, '')
 	}
 }
 
