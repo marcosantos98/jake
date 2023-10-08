@@ -1,11 +1,41 @@
 module jake
 
+import cli { Command }
 import java
 import json
 import os
 import utils { check_tool, log, log_error }
 
-pub fn load_project() utils.JakeProject {
+// jake build exec function
+pub fn build(cmd Command) ! {
+	build_project(false, '')
+}
+
+// jake build run <args>
+pub fn buildrun(cmd Command) ! {
+	mut args := ''
+	for arg in cmd.args {
+		args += '${arg} '
+	}
+	build_project(true, args)
+}
+
+// jake run <args>
+pub fn run(cmd Command) ! {
+	mut args := ''
+	for arg in cmd.args {
+		args += '${arg} '
+	}
+	proj := load_project()
+	run_project(proj, args)
+}
+
+// jake test
+pub fn test(cmd Command) ! {
+	build_and_run_project_tests()
+}
+
+fn load_project() utils.JakeProject {
 	// 1. Check for existance of certain tools like java, jar, javac and wget
 	check_tool('java')
 	check_tool('jar')
@@ -81,7 +111,7 @@ fn setup_testing(jk utils.JakeProject) {
 	}
 }
 
-pub fn build_project(run bool, args string) {
+fn build_project(run bool, args string) {
 	// 1. Load project
 	mut jake_proj := load_project()
 
@@ -101,7 +131,7 @@ pub fn build_project(run bool, args string) {
 	}
 }
 
-pub fn build_and_run_project_tests() {
+fn build_and_run_project_tests() {
 	// 1. Load project
 	mut jake_proj := load_project()
 
@@ -118,7 +148,7 @@ pub fn build_and_run_project_tests() {
 	run_tests(jake_proj)
 }
 
-pub fn run_project(jake_proj utils.JakeProject, args string) {
+fn run_project(jake_proj utils.JakeProject, args string) {
 	mut cmd := 'java '
 
 	// 1. Construct classpath

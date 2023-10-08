@@ -32,12 +32,12 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 
 ### Current features:
 
-- Gather all the `.java` files and build them into a single jar file with `jake -b`
-- Run the final jar with `jake -br`
-  - Can also specify args for the final jar with `jake -br [args]`
+- Gather all the `.java` files and build them into a single jar file with `jake build`
+- Run the final jar with `jake run` or `jake build run`
+  - Can also specify args for the final jar with `jake build run [args]` or `jake run [args]`
 - Only build source files that have been recently modified.
 - External library support. (Only local libraries for now)
-- Support for tests with JUnit `jake -bt`
+- Support for tests with JUnit `jake test`
 
 ## Testing Java:
 
@@ -49,5 +49,5 @@ Currently `jake` has an option called `include_testing` that sets JUnit as the t
   "include_testing" : true
 }
 ```
+After the setup, you can run `jake test` to run all the tests
 
-After the setup, you can run `jake -t` to run all the tests or `jake -bt` to rebuild and run the tests.
