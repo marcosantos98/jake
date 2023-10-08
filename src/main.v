@@ -1,5 +1,6 @@
 module main
 
+import cli { Command }
 import jake
 import os
 
@@ -24,31 +25,44 @@ fn collect_args() string {
 }
 
 fn main() {
-	if os.args.len >= 2 {
-		match os.args[1] {
-			'-h' {
-				print_usage()
-			}
-			'-br' {
-				jake.build_project(true, collect_args())
-			}
-			'-bt' {
-				jake.build_and_run_project_tests()
-			}
-			'-r' {
-				jk := jake.load_project()
-				jake.run_project(jk, collect_args())
-			}
-			'-v' {
-				println('jake 0.0.1')
-			}
-			else {
-				print_usage()
-			}
-		}
-	} else {
-		jake.build_project(false, '')
+	mut app := Command{
+		name: 'jake'
+		execute: jake.build
+		disable_man: true
+		commands: [
+			Command{
+				name: 'build'
+				description: 'Build the project'
+				execute: jake.build
+				disable_man: true
+				commands: [
+					Command{
+						name: 'run'
+						description: 'Run after the build is finished'
+						usage: '<args>'
+						execute: jake.buildrun
+						disable_man: true
+					},
+				]
+			},
+			Command{
+				name: 'run'
+				description: 'Run project'
+				usage: '<args>'
+				execute: jake.run
+				disable_man: true
+			},
+			Command{
+				name: 'test'
+				description: 'Prepare and run tests'
+				execute: jake.test
+				disable_man: true
+			},
+		]
 	}
+
+	app.setup()
+	app.parse(os.args)
 }
 
 // TODO:
