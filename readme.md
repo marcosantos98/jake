@@ -17,18 +17,18 @@ When using gradle to build the same code that is present in the `example` folder
 | Gradle | 0.860ms    | 0.750ms                | 0.830ms                |
 | Jake   | 0.460ms    | 0.110ms                | 0.470ms                |
 
-This times have been taken in the following enviromment:
+These times have been taken in the following environment:
 - CPU: i7 9700k
 - Java: OpenJDK 17
 - OS: ArchLinux
 - Project: [example/]()
-- No dependencies or test famework in Gradle, only a basic application with the testing framework stripped.
+- No dependencies or test framework in Gradle, only a basic application with the testing framework stripped.
 
-The following times may be affected by the fact that `jake` is written in V which translate to C, and `Gradle` is written in Java. And we all know that C is just faster.
+The following times may be affected by the fact that `jake` is written in V which translates to C, and `Gradle` is written in Java. And we all know that C is just faster.
 
 ### TODO:
 
-Check the end of `main.v` to know what is planned to be added to the project in the near feature.
+Check the end of `main.v` to know what is planned to be added to the project in the near future.
 
 ### Current features:
 
@@ -41,7 +41,7 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 
 ## Testing Java:
 
-Currently `jake` has an option called `include_testing` that setups JUnit as the test framework.
+Currently `jake` has an option called `include_testing` that sets JUnit as the test framework.
 
 ```json
 {
@@ -49,5 +49,5 @@ Currently `jake` has an option called `include_testing` that setups JUnit as the
   "include_testing" : true
 }
 ```
+After the setup, you can run `jake test` to run all the tests
 
-After the setup you can run `jake -t` to run all the tests or `jake -bt` to rebuild and run the tests.
