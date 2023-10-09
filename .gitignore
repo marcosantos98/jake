@@ -15,6 +15,7 @@ bin/
 .vscode/
 *.iml
 
+example/Subclass.java
 example/build
 example/.cache
 example/*.jar
