@@ -4,26 +4,6 @@ import cli { Command }
 import jake
 import os
 
-fn print_usage() {
-	println('Usage:')
-	println('\tjake [options]')
-	println('\tOptions:')
-	println('\t\t-br: Build and run the jar program.')
-	println('\t\t-bt: Build and run the tests with JUnit.')
-	println('\t\t-r: Run the jar program.')
-	println('\t\t-v: Print the version.')
-}
-
-fn collect_args() string {
-	mut args := ''
-	if os.args.len > 2 {
-		for i in 2 .. os.args.len {
-			args += '${os.args[i]} '
-		}
-	}
-	return args
-}
-
 fn main() {
 	mut app := Command{
 		name: 'jake'
