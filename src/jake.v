@@ -4,6 +4,7 @@ import cli { Command }
 import java
 import json
 import os
+import strings
 import utils { check_tool, log, log_error }
 
 // jake build exec function
@@ -13,26 +14,32 @@ pub fn build(cmd Command) ! {
 
 // jake build run <args>
 pub fn buildrun(cmd Command) ! {
-	mut args := ''
-	for arg in cmd.args {
-		args += '${arg} '
-	}
-	build_project(true, args)
+	build_project(true, cmdargs_to_str(cmd))
 }
 
 // jake run <args>
 pub fn run(cmd Command) ! {
-	mut args := ''
-	for arg in cmd.args {
-		args += '${arg} '
-	}
 	proj := load_project()
-	run_project(proj, args)
+	run_project(proj, cmdargs_to_str(cmd))
 }
 
 // jake test
 pub fn test(cmd Command) ! {
 	build_and_run_project_tests()
+}
+
+fn cmdargs_to_str(cmd Command) string {
+	mut args_builder := strings.new_builder(1024)
+	for arg in cmd.args {
+		args_builder.write_string('${arg} ')
+	}
+	if cmd.args.len > 0 {
+		args_builder.go_back(1)
+	}
+
+	args := args_builder.str()
+	unsafe { args_builder.free() }
+	return args
 }
 
 fn load_project() utils.JakeProject {
@@ -149,7 +156,7 @@ fn build_and_run_project_tests() {
 }
 
 fn run_project(jake_proj utils.JakeProject, args string) {
-	mut cmd := 'java '
+	mut cmd := ''
 
 	// 1. Construct classpath
 	if jake_proj.libs.len > 0 {
@@ -162,16 +169,12 @@ fn run_project(jake_proj utils.JakeProject, args string) {
 		cmd += '-jar ${jake_proj.jar_name} ${args}'
 	}
 
-	log('> ${cmd}')
+	log('> java ${cmd}')
 
 	// 2. Exec command and print output.
-	// fixme 23/10/05: Should this use a child process?
-	//				We don't really need to have the execution after the user runs the compiled program.
-	res := os.execute(cmd)
-	print(res.output)
-	if res.exit_code != 0 {
-		log_error('> Failed to run jar file.')
-		exit(res.exit_code)
+	os.execvp('java', cmd.split(' ')) or {
+		eprintln('Err: ${err}')
+		exit(1)
 	}
 }
 
