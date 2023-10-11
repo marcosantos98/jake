@@ -4,6 +4,16 @@ import cli { Command }
 import jake
 import os
 
+// Usage:
+// jake [flags]
+// jake build [options]
+//	Build the current project
+//	Options:
+//		run - Run the project after build
+// jake run
+//	Run the project
+// jake test
+//	Build and test
 fn main() {
 	mut app := Command{
 		name: 'jake'
