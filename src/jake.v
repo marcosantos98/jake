@@ -47,10 +47,20 @@ fn load_project() utils.JakeProject {
 	mut b := benchmark.start()
 
 	// 1. Check for existance of certain tools like java, jar, javac and wget
-	check_tool('java')
-	check_tool('jar')
-	check_tool('javac')
-	check_tool('wget')
+
+	if !os.exists('.cache/hastools') {
+		check_tool('java')
+		check_tool('jar')
+		check_tool('javac')
+		check_tool('wget')
+
+		// Try create the cache folder since this normally runs only one time
+		utils.make_dir('.cache')
+		os.create('.cache/hastools') or {
+			eprintln('ERR: Couldn\'t create file at ".cache/hastools". ${err}')
+			exit(1)
+		}
+	}
 
 	if_bench(mut b, 'LoadProject: check tools')
 
@@ -62,6 +72,8 @@ fn load_project() utils.JakeProject {
 		log_error('> Failed to load project! ERROR: ${err}')
 		exit(1)
 	}
+
+	if_bench(mut b, "LoadProject: decode jakefile")
 
 	// 3. Try to create the folder structure
 	utils.make_dir('build')
