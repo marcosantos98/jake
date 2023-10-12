@@ -200,7 +200,7 @@ fn run_tests(jk utils.JakeProject) {
 		exit(1)
 	}
 
-	mut cmd := 'java -cp .:${jk.build_tests_dir_path}'
+	mut cmd := '-cp .:${jk.build_tests_dir_path}'
 
 	// 2 . Contruct classpath
 	for lib in jk.libs {
@@ -209,24 +209,25 @@ fn run_tests(jk utils.JakeProject) {
 
 	cmd += ':.cache/junit-${utils.junit_version}.jar:.cache/hamcrest-core-${utils.hamcrest_version}.jar'
 
-	cmd += ':${jk.jar_name} org.junit.runner.JUnitCore '
+	cmd += ':${jk.jar_name} org.junit.runner.JUnitCore'
 
+	mut tests := ''
 	// 3 . Collect tests
 	for test in jk.tests {
 		classpath := test.replace('${jk.tests_dir_path}/', '').replace('/', '.').replace('.java',
 			'')
-		cmd += '${classpath} '
+		tests += ' ${classpath}'
 	}
 
-	log('> ${cmd}')
+	cmd += tests
+
+	log('> java ${cmd}')
 
 	if_bench(mut b, 'Gen run tests command')
 
 	// 4 . Exec command
-	res := os.execute(cmd)
-	print(res.output)
-	if res.exit_code > 0 {
-		log_error('> Failed to run tests.')
-		exit(res.exit_code)
+	os.execvp('java', cmd.split(' ')) or {
+		eprintln('Err: ${err}')
+		exit(1)
 	}
 }
