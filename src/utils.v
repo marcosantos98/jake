@@ -1,5 +1,6 @@
 module utils
 
+import benchmark
 import os
 import term
 
@@ -26,6 +27,13 @@ pub const (
 	junit_version    = '4.13.2'
 	hamcrest_version = '1.3'
 )
+
+// Measure if `-d bench` option is defined
+pub fn if_bench(mut b benchmark.Benchmark, msg string) {
+	$if bench ? {
+		b.measure(msg)
+	}
+}
 
 // Kinda copied and pasted from https://github.com/vlang/v/blob/master/examples/process/process_stdin_trick.v
 pub fn execute_in_dir(cmd string, workind_dir string) (string, int) {
@@ -79,7 +87,7 @@ pub fn check_tool(tool string) {
 	// - /dev/null: Only checking for unix systems
 	//				Use > NUL for windows.
 	// - wget: Only unix systems has wget by default.
-	// 	 	   From windows10+, microsoft include support for curl, this can be a option.			
+	// 	 	   From windows10+, microsoft include support for curl, this can be a option.
 	if os.system('${tool} --version > /dev/null 2>&1') != 0 {
 		log_error("> ${tool} doesn't exist! jake needs ${tool} to work.")
 		exit(1)
