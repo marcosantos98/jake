@@ -1,11 +1,12 @@
 module jake
 
+import benchmark
 import cli { Command }
 import java
 import json
 import os
 import strings
-import utils { check_tool, log, log_error }
+import utils { check_tool, if_bench, log, log_error }
 
 // jake build exec function
 pub fn build(cmd Command) ! {
@@ -43,11 +44,15 @@ fn cmdargs_to_str(cmd Command) string {
 }
 
 fn load_project() utils.JakeProject {
+	mut b := benchmark.start()
+
 	// 1. Check for existance of certain tools like java, jar, javac and wget
 	check_tool('java')
 	check_tool('jar')
 	check_tool('javac')
 	check_tool('wget')
+
+	if_bench(mut b, 'LoadProject: check tools')
 
 	// 2. Decode jakefile.json present where the jake bin was called
 	mut jake_proj := json.decode(utils.JakeProject, os.read_file('./jakefile.json') or {
@@ -81,11 +86,15 @@ fn load_project() utils.JakeProject {
 	jake_proj.sources = os.walk_ext(jake_proj.src_dir_path, 'java')
 	jake_proj.libs = os.walk_ext(jake_proj.libs_dir_path, 'jar')
 
+	if_bench(mut b, 'LoadProject: setup project')
+
 	// 5. Check if the project has tests enabled, and then setup for testing
 	if jake_proj.include_testing {
 		jake_proj.tests = os.walk_ext(jake_proj.tests_dir_path, 'java')
 		setup_testing(jake_proj)
+		if_bench(mut b, 'LoadProject: setup testing')
 	}
+
 	return jake_proj
 }
 
@@ -156,6 +165,8 @@ fn build_and_run_project_tests() {
 }
 
 fn run_project(jake_proj utils.JakeProject, args string) {
+	mut b := benchmark.start()
+
 	mut cmd := ''
 
 	// 1. Construct classpath
@@ -171,6 +182,8 @@ fn run_project(jake_proj utils.JakeProject, args string) {
 
 	log('> java ${cmd}')
 
+	if_bench(mut b, 'Gen run command')
+
 	// 2. Exec command and print output.
 	os.execvp('java', cmd.split(' ')) or {
 		eprintln('Err: ${err}')
@@ -179,6 +192,8 @@ fn run_project(jake_proj utils.JakeProject, args string) {
 }
 
 fn run_tests(jk utils.JakeProject) {
+	mut b := benchmark.start()
+
 	// 1. Check if project has testing enabled
 	if !jk.include_testing {
 		log_error('> Jake option `include_testing` is false. Change it to true to include testing framework.')
@@ -204,6 +219,8 @@ fn run_tests(jk utils.JakeProject) {
 	}
 
 	log('> ${cmd}')
+
+	if_bench(mut b, 'Gen run tests command')
 
 	// 4 . Exec command
 	res := os.execute(cmd)

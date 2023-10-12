@@ -1,10 +1,13 @@
 module java
 
+import benchmark
 import os
 import term { reset }
-import utils { log, log_error }
+import utils { if_bench, log, log_error }
 
 pub fn compile_srcs(jake utils.JakeProject) {
+	mut b := benchmark.start()
+
 	mut classpath := '-cp ${jake.build_dir_path}'
 
 	for lib in jake.libs {
@@ -24,11 +27,14 @@ pub fn compile_srcs(jake utils.JakeProject) {
 
 	if sources == '' {
 		println('> Nothing to build.')
+		if_bench(mut b, 'Javac Command Gen')
 		return
 	}
 
 	options := '${classpath} -d ${jake.build_dir_path}'
 	cmd := 'javac ${options} ${sources}'
+
+	if_bench(mut b, 'Javac Command Gen')
 
 	log('> Compile java files with javac:')
 	println(reset('\t${cmd}'))
@@ -39,9 +45,13 @@ pub fn compile_srcs(jake utils.JakeProject) {
 		log_error('> Failed compilation step.')
 		exit(res.exit_code)
 	}
+
+	if_bench(mut b, 'Javac command exec')
 }
 
 pub fn compile_tests(jake utils.JakeProject) {
+	mut b := benchmark.start()
+
 	mut classpath := '-cp ${jake.build_dir_path}:${jake.build_tests_dir_path}:./.cache/junit-${utils.junit_version}.jar:./.cache/hamcrest-core-${utils.hamcrest_version}.jar'
 
 	for lib in jake.libs {
@@ -60,12 +70,13 @@ pub fn compile_tests(jake utils.JakeProject) {
 
 	if sources == '' {
 		println('> Nothing to build.')
+		if_bench(mut b, 'Javac Tests Command Gen')
 		return
 	}
 
 	options := '${classpath} -d ${jake.build_tests_dir_path}'
 	cmd := 'javac ${options} ${sources}'
-
+	if_bench(mut b, 'Javac Tests Command Gen')
 	log('> Compile java test files with javac:')
 	println(reset('\t${cmd}'))
 	res := os.execute(cmd)
@@ -74,9 +85,11 @@ pub fn compile_tests(jake utils.JakeProject) {
 		log_error('> Failed compilation step.')
 		exit(res.exit_code)
 	}
+	if_bench(mut b, 'Javac Tests Command Exec')
 }
 
 pub fn create_jar(jake utils.JakeProject) {
+	mut b := benchmark.start()
 	// 1. Cleanup old .class files that don't exist in .java form.
 	for built_source in os.walk_ext(jake.build_dir_path, 'class') {
 		src := built_source.replace('.class', '.java').replace(jake.build_dir_path, jake.src_dir_path)
@@ -98,10 +111,14 @@ pub fn create_jar(jake utils.JakeProject) {
 		'cf ${jake.jar_name} *'
 	}
 
+	if_bench(mut b, 'Jar Create Command Gen')
+
 	// 3. Call exec with the generated command: jar ${options}
 	cmd := 'jar ${options}'
 	log('> Creating jar file ${jake.jar_name}:')
 	println(reset('\t${cmd}'))
 	out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
 	print(out)
+
+	if_bench(mut b, 'Jar Command Exec')
 }
