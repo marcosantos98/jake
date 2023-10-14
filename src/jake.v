@@ -5,7 +5,6 @@ import cli { Command }
 import java
 import json
 import os
-import strings
 import utils { check_tool, if_bench, log, log_error }
 
 // jake build exec function
@@ -15,32 +14,18 @@ pub fn build(cmd Command) ! {
 
 // jake build run <args>
 pub fn buildrun(cmd Command) ! {
-	build_project(true, cmdargs_to_str(cmd))
+	build_project(true, cmd.args.join(' '))
 }
 
 // jake run <args>
 pub fn run(cmd Command) ! {
 	proj := load_project()
-	run_project(proj, cmdargs_to_str(cmd))
+	run_project(proj, cmd.args.join(' '))
 }
 
 // jake test
 pub fn test(cmd Command) ! {
 	build_and_run_project_tests()
-}
-
-fn cmdargs_to_str(cmd Command) string {
-	mut args_builder := strings.new_builder(1024)
-	for arg in cmd.args {
-		args_builder.write_string('${arg} ')
-	}
-	if cmd.args.len > 0 {
-		args_builder.go_back(1)
-	}
-
-	args := args_builder.str()
-	unsafe { args_builder.free() }
-	return args
 }
 
 fn load_project() utils.JakeProject {
@@ -73,7 +58,7 @@ fn load_project() utils.JakeProject {
 		exit(1)
 	}
 
-	if_bench(mut b, "LoadProject: decode jakefile")
+	if_bench(mut b, 'LoadProject: decode jakefile')
 
 	// 3. Try to create the folder structure
 	utils.make_dir('build')
