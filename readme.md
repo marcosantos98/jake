@@ -26,6 +26,23 @@ These times have been taken in the following environment:
 
 The following times may be affected by the fact that `jake` is written in V which translates to C, and `Gradle` is written in Java. And we all know that C is just faster.
 
+### Quick start:
+
+1. Clone repo
+```
+git clone https://github.com/marcosantos98/jake.git
+```
+2. Compile
+```
+v .
+```
+3. Symlink
+```
+sudo ./jake sym
+```
+
+**DONE** :boom:
+
 ### TODO:
 
 Check the end of `main.v` to know what is planned to be added to the project in the near future.
