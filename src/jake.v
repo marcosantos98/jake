@@ -31,8 +31,18 @@ pub fn test(cmd Command) ! {
 fn load_project() utils.JakeProject {
 	mut b := benchmark.start()
 
-	// 1. Check for existance of certain tools like java, jar, javac and wget
+	// 1. Decode jakefile.json present where the jake bin was called
+	mut jake_proj := json.decode(utils.JakeProject, os.read_file('./jakefile.json') or {
+		log_error("Couldn't read jakefile in root folder.")
+		exit(1)
+	}) or {
+		log_error('> Failed to load project! ERROR: ${err}')
+		exit(1)
+	}
 
+	if_bench(mut b, 'LoadProject: decode jakefile')
+
+	// 2.  Check for existance of certain tools like java, jar, javac and wget
 	if !os.exists('.cache/hastools') {
 		check_tool('java')
 		check_tool('jar')
@@ -48,17 +58,6 @@ fn load_project() utils.JakeProject {
 	}
 
 	if_bench(mut b, 'LoadProject: check tools')
-
-	// 2. Decode jakefile.json present where the jake bin was called
-	mut jake_proj := json.decode(utils.JakeProject, os.read_file('./jakefile.json') or {
-		log_error("Couldn't read jakefile in root folder.")
-		exit(1)
-	}) or {
-		log_error('> Failed to load project! ERROR: ${err}')
-		exit(1)
-	}
-
-	if_bench(mut b, 'LoadProject: decode jakefile')
 
 	// 3. Try to create the folder structure
 	utils.make_dir('build')
