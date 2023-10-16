@@ -28,6 +28,16 @@ pub fn test(cmd Command) ! {
 	build_and_run_project_tests()
 }
 
+// jake sym
+pub fn sym(cmd Command) ! {
+	jake_exec := os.real_path('./jake')
+	os.rm('/usr/local/bin/jake') or {} // silent fail
+	os.symlink(jake_exec, '/usr/local/bin/jake') or {
+		eprintln("Couldn't create soft link to `/usr/local/bin`. Try with sudo.")
+		exit(1)
+	}
+}
+
 fn load_project() utils.JakeProject {
 	mut b := benchmark.start()
 

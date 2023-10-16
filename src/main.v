@@ -14,6 +14,7 @@ import os
 //	Run the project
 // jake test
 //	Build and test
+// jake sym
 fn main() {
 	mut app := Command{
 		name: 'jake'
@@ -46,6 +47,12 @@ fn main() {
 				name: 'test'
 				description: 'Prepare and run tests'
 				execute: jake.test
+				disable_man: true
+			},
+			Command{
+				name: 'sym'
+				description: 'Create soft link to the jake executable'
+				execute: jake.sym
 				disable_man: true
 			},
 		]
