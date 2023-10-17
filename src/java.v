@@ -103,6 +103,7 @@ pub fn create_jar(jake utils.JakeProject) {
 			}
 		}
 	}
+	if_bench(mut b, 'Clenup old .class files')
 
 	// 2. Check for entry point, if present include `e` option
 	mut options := if jake.entry_point != '' {
