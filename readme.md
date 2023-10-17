@@ -43,6 +43,24 @@ sudo ./jake sym
 
 **DONE** :boom:
 
+### Usage:
+
+```
+jake
+	Fast path to `jake build`
+jake build [options]
+	Build the current project
+	Options:
+		run <args> - Run the project after build with given args
+jake run <args>
+	Run the project
+		args - arguments passed to java
+jake test
+	Build and test
+jake sym
+	Create soft link to `/usr/local/bin`
+```
+
 ### TODO:
 
 Check the end of `main.v` to know what is planned to be added to the project in the near future.

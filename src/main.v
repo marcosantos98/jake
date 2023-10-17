@@ -5,16 +5,19 @@ import jake
 import os
 
 // Usage:
-// jake [flags]
+// jake
+//	Fast path to `jake build`
 // jake build [options]
 //	Build the current project
 //	Options:
-//		run - Run the project after build
-// jake run
+//		run <args> - Run the project after build with given args
+// jake run <args>
 //	Run the project
+//		args - arguments passed to java
 // jake test
 //	Build and test
 // jake sym
+//	Create soft link to `/usr/local/bin`
 fn main() {
 	mut app := Command{
 		name: 'jake'
