@@ -96,6 +96,10 @@ pub fn check_tool(tool string) {
 	}
 }
 
+pub fn log_info(msg string) {
+	println(term.bright_blue(msg))
+}
+
 pub fn log(msg string) {
 	println(term.bright_green(msg))
 }

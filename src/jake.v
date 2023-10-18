@@ -6,7 +6,7 @@ import net.http
 import java
 import json
 import os
-import utils { check_tool, if_bench, log, log_error }
+import utils { check_tool, if_bench, log, log_error, log_info }
 
 // jake build exec function
 pub fn build(cmd Command) ! {
