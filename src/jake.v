@@ -109,14 +109,14 @@ fn load_project() utils.JakeProject {
 			log_error('Resolving dependencies without any repositories defined.')
 		}
 
-		try_resolve_dep(jake_proj)
+		try_resolve_dep(mut jake_proj)
 		if_bench(mut b, 'LoadProject: resolve dependencies.')
 	}
 
 	return jake_proj
 }
 
-fn try_resolve_dep(jk utils.JakeProject) {
+fn try_resolve_dep(mut jk utils.JakeProject) {
 	mut b := benchmark.new_benchmark()
 
 	for dep in jk.deps {
@@ -134,6 +134,7 @@ fn try_resolve_dep(jk utils.JakeProject) {
 		final_name := '${format[1]}-${format[2]}.jar'
 		if os.exists('${jk.pwd}/.cache/deps/${final_name}') {
 			log_info('> Found ${final_name}')
+			jk.libs << '${jk.pwd}/.cache/deps/${final_name}'
 			continue
 		} else {
 			log_info('> Resolving ${dep}')
@@ -176,6 +177,8 @@ fn try_resolve_dep(jk utils.JakeProject) {
 		// 3. Print errors if couldn't be found in any repo
 		if !resolved {
 			println(not_found.join_lines())
+		} else {
+			jk.libs << '${jk.pwd}/.cache/deps/${final_name}'
 		}
 	}
 }
