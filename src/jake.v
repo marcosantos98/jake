@@ -2,6 +2,7 @@ module jake
 
 import benchmark
 import cli { Command }
+import net.http
 import java
 import json
 import os
@@ -73,6 +74,7 @@ fn load_project() utils.JakeProject {
 	utils.make_dir('build')
 	utils.make_dir('build/main')
 	utils.make_dir('.cache')
+	utils.make_dir('.cache/deps')
 	utils.make_dir('libs')
 	utils.make_dir('src')
 	utils.make_dir('src/main')
@@ -101,7 +103,81 @@ fn load_project() utils.JakeProject {
 		if_bench(mut b, 'LoadProject: setup testing')
 	}
 
+	// 6. Resolve dependency
+	if jake_proj.deps.len > 0 {
+		if jake_proj.repos.len == 0 {
+			log_error('Resolving dependencies without any repositories defined.')
+		}
+
+		try_resolve_dep(jake_proj)
+		if_bench(mut b, 'LoadProject: resolve dependencies.')
+	}
+
 	return jake_proj
+}
+
+fn try_resolve_dep(jk utils.JakeProject) {
+	mut b := benchmark.new_benchmark()
+
+	for dep in jk.deps {
+		// 1. Check existance and construct path from dependency if needed
+		// 		junit:junit:4.13.2
+		//		|     |     |
+		//		|     |     -> version
+		//		|     -> name
+		//		-> group
+		format := dep.split(':')
+		if format.len < 3 {
+			log_error('Error in dependency format: [group]:[name]:[version]. ${dep}')
+		}
+
+		final_name := '${format[1]}-${format[2]}.jar'
+		if os.exists('${jk.pwd}/.cache/deps/${final_name}') {
+			log_info('> Found ${final_name}')
+			continue
+		} else {
+			log_info('> Resolving ${dep}')
+		}
+
+		format_as_url_part := format[0].replace('.', '/') + '/' + format[1] + '/' + format[2] +
+			'/' + final_name
+
+		// 2. Check availability in repos
+		mut not_found := []string{}
+		mut resolved := false
+
+		for repo in jk.repos {
+			url := repo + format_as_url_part
+			b.step()
+			result := http.fetch(http.FetchConfig{
+				url: url
+			}) or {
+				eprintln('Err: ${err}')
+				exit(1)
+			}
+			if_bench(mut b, 'TryResolveDependency: Fetch step')
+			match result.status() {
+				.ok {
+					b.step()
+					http.download_file(url, '${jk.pwd}/.cache/deps/${final_name}') or {
+						eprintln('Err: ${err}')
+					}
+					if_bench(mut b, 'TryResolveDependency: Download step')
+					resolved = true
+					break
+				}
+				.not_found {
+					not_found << 'Dependency ${dep} not resolve in ${repo} with full url: ${url}'
+				}
+				else {}
+			}
+		}
+
+		// 3. Print errors if couldn't be found in any repo
+		if !resolved {
+			println(not_found.join_lines())
+		}
+	}
 }
 
 fn setup_testing(jk utils.JakeProject) {
