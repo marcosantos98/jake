@@ -36,6 +36,7 @@ fn main() {
 						usage: '<args>'
 						execute: jake.buildrun
 						disable_man: true
+						disable_flags: true
 					},
 				]
 			},
@@ -45,6 +46,7 @@ fn main() {
 				usage: '<args>'
 				execute: jake.run
 				disable_man: true
+				disable_flags: true
 			},
 			Command{
 				name: 'test'
