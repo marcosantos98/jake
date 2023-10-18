@@ -6,10 +6,12 @@ import term
 
 pub struct JakeProject {
 pub:
-	name            string [required]
-	version         string [required]
+	name            string   [required]
+	version         string   [required]
 	entry_point     string
 	include_testing bool
+	repos           []string
+	deps            []string
 pub mut:
 	src_dir_path         string   [skip]
 	build_dir_path       string   [skip]
@@ -92,6 +94,10 @@ pub fn check_tool(tool string) {
 		log_error("> ${tool} doesn't exist! jake needs ${tool} to work.")
 		exit(1)
 	}
+}
+
+pub fn log_info(msg string) {
+	println(term.bright_blue(msg))
 }
 
 pub fn log(msg string) {
