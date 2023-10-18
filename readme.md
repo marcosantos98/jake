@@ -3,12 +3,12 @@
 ## :warning: WARNING
 
 > This WIP tool. Beware that this probably contains bugs
-> Also no documentation for now, check the `example` folder for a simple documentation.
+> Also no documentation for now, check the `example` folder for simple documentation.
 > Check JakeProject struct in `main.v` for required fields and optional fields for jakefile.json.
 
 ## Why:
 
-Tools like gradle or maven becomes to slow when building simple projects due to the fact that they are design for large projects and work on a lot of different scenarios.
+Tools like gradle or maven become to slow when building simple projects because they are designed for large projects and work on a lot of different scenarios.
 
 When using gradle to build the same code that is present in the `example` folder, without using any testing framework, I got the following results.
 
@@ -17,7 +17,7 @@ When using gradle to build the same code that is present in the `example` folder
 | Gradle | 0.860ms    | 0.750ms                | 0.830ms                |
 | Jake   | 0.460ms    | 0.110ms                | 0.470ms                |
 
-These times have been taken in the following environment:
+These times have been taken in the following environments:
 - CPU: i7 9700k
 - Java: OpenJDK 17
 - OS: ArchLinux
@@ -47,18 +47,18 @@ sudo ./jake sym
 
 ```
 jake
-	Fast path to `jake build`
+    Fast path to `jake build`
 jake build [options]
-	Build the current project
-	Options:
-		run <args> - Run the project after build with given args
+    Build the current project
+    Options:
+        run <args> - Run the project after build with given args
 jake run <args>
-	Run the project
-		args - arguments passed to java
+    Run the project
+        args - arguments passed to java
 jake test
-	Build and test
+    Build and test
 jake sym
-	Create soft link to `/usr/local/bin`
+    Create a soft link to `/usr/local/bin`
 ```
 
 ### TODO:
@@ -86,3 +86,21 @@ Currently `jake` has an option called `include_testing` that sets JUnit as the t
 ```
 After the setup, you can run `jake test` to run all the tests
 
+## Remote libraries:
+
+```json
+{
+    ...
+    "repos": [
+        "repo_url"
+    ],
+    "deps": [
+        "junit:junit:4.13.2"
+    ]
+}
+```
+
+Jake uses the same format as gradle short version. 
+```
+implementation 'junit:junit:4.13.2
+```
