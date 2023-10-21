@@ -71,7 +71,7 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 - Run the final jar with `jake run` or `jake build run`
   - Can also specify args for the final jar with `jake build run [args]` or `jake run [args]`
 - Only build source files that have been recently modified.
-- External library support. (Only local libraries for now)
+- External library support.
 - Support for tests with JUnit `jake test`
 
 ## Testing Java:
@@ -100,7 +100,7 @@ After the setup, you can run `jake test` to run all the tests
 }
 ```
 
-Jake uses the same format as gradle short version. 
+Jake uses the same format as gradle short version.
 ```
 implementation 'junit:junit:4.13.2
 ```
