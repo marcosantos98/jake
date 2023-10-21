@@ -73,3 +73,4 @@ fn main() {
 //	- Add option to remove verbose output.
 //  - Include more documentation in code.
 //  - Improve command generation
+//  - Add `init` input driven command to setup new project

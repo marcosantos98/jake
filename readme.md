@@ -78,6 +78,8 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 
 Currently `jake` has an option called `include_testing` that sets JUnit as the test framework.
 
+Note: `jake test` only builds test files, if you want change a main source file you need to call `jake` first and then `jake test` 
+
 ```json
 {
   ...
