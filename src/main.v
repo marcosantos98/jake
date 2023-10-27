@@ -7,6 +7,8 @@ import os
 // Usage:
 // jake
 //	Fast path to `jake build`
+// jake init
+//  Create jakefile.json with user input and setup project structure
 // jake build [options]
 //	Build the current project
 //	Options:
@@ -39,6 +41,13 @@ fn main() {
 						disable_flags: true
 					},
 				]
+			},
+			Command{
+				name: 'init'
+				description: 'Initialize sample project.'
+				execute: jake.init
+				disable_man: true
+				disable_flags: true
 			},
 			Command{
 				name: 'run'
