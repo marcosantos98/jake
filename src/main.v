@@ -7,6 +7,8 @@ import os
 // Usage:
 // jake
 //	Fast path to `jake build`
+// jake init
+//  Create jakefile.json with user input and setup project structure
 // jake build [options]
 //	Build the current project
 //	Options:
