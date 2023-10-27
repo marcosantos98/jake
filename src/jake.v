@@ -6,7 +6,44 @@ import net.http
 import java
 import json
 import os
+import readline
 import utils { check_tool, if_bench, log, log_error, log_info }
+
+// jake init exec function
+pub fn init(cmd Command) ! {
+	mut r := readline.Readline{}
+	r.enable_raw_mode_nosig()
+	defer {
+		r.disable_raw_mode()
+	}
+
+	// fixme 23/10/27: Handle errors
+	mut name := ''
+	mut version := '1.0.0'
+	for {
+		name = r.read_line('Project name: ')!
+		if name == '' {
+			println("Project name isn't optional")
+		} else {
+			break
+		}
+	}
+
+	mut tmp := r.read_line('Version [1.0.0]: ')!
+	if tmp != '' {
+		version = tmp
+	}
+
+	jk := utils.JakeProject{
+		name: name
+		version: version
+	}
+
+	res := json.encode_pretty(jk)
+	os.write_file('${os.getwd()}/jakefile.json', res) or { println(err) }
+	println('Success! Created jake file at ${os.getwd()}.')
+	load_project() // Call load project to setup the project structure
+}
 
 // jake build exec function
 pub fn build(cmd Command) ! {
