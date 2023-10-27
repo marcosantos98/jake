@@ -43,6 +43,13 @@ fn main() {
 				]
 			},
 			Command{
+				name: 'init'
+				description: 'Initialize sample project.'
+				execute: jake.init
+				disable_man: true
+				disable_flags: true
+			},
+			Command{
 				name: 'run'
 				description: 'Run project'
 				usage: '<args>'
