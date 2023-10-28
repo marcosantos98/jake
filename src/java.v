@@ -91,7 +91,14 @@ pub fn compile_tests(jake utils.JakeProject) {
 pub fn create_jar(jake utils.JakeProject) {
 	mut b := benchmark.start()
 	// 1. Cleanup old .class files that don't exist in .java form.
-	for built_source in os.walk_ext(jake.build_dir_path, 'class') {
+	classes := os.walk_ext(jake.build_dir_path, 'class')
+
+	if classes.len == 0 {
+		//fixme 23/10/29: This should check in the future for includes
+		return
+	}
+
+	for built_source in classes {
 		src := built_source.replace('.class', '.java').replace(jake.build_dir_path, jake.src_dir_path)
 		if built_source.contains('$') {
 			if !os.exists(src.split('$')[0] + '.java') {
