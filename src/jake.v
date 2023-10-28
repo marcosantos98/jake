@@ -258,9 +258,12 @@ fn build_project(run bool, args string) {
 	java.create_jar(jake_proj)
 
 	// 3. Move the built jar to the project root directory
-	os.mv('${jake_proj.build_dir_path}/${jake_proj.jar_name}', '.') or {
-		log_error("Couldn't move final jar from build folder to the root of the project. ERR: ${err}")
-		exit(1)
+	jar_path := '${jake_proj.build_dir_path}/${jake_proj.jar_name}'
+	if os.exists(jar_path) {
+		os.mv(jar_path, '.') or {
+			log_error("Couldn't move final jar from build folder to the root of the project. ERR: ${err}")
+			exit(1)
+		}
 	}
 
 	// 4. Run the project if necessary
