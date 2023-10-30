@@ -23,6 +23,7 @@ import os
 fn main() {
 	mut app := Command{
 		name: 'jake'
+		description: 'Compile the current project in the working directory.\n- Get started with `jake init`\n- Know more with `jake help`\n- You can use `jake` as a shortcut to `jake build`'
 		execute: jake.build
 		disable_man: true
 		commands: [
@@ -82,4 +83,3 @@ fn main() {
 //	- Add option to remove verbose output.
 //  - Include more documentation in code.
 //  - Improve command generation
-//  - Add `init` input driven command to setup new project

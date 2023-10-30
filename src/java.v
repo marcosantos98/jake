@@ -94,7 +94,7 @@ pub fn create_jar(jake utils.JakeProject) {
 	classes := os.walk_ext(jake.build_dir_path, 'class')
 
 	if classes.len == 0 {
-		//fixme 23/10/29: This should check in the future for includes
+		// fixme 23/10/29: This should check in the future for includes
 		return
 	}
 
