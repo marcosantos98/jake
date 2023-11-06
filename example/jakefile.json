@@ -7,6 +7,7 @@
         "https://repo1.maven.org/maven2/"
     ],
     "deps": [
-        "org.apache.commons:commons-math:2.2"
+        "org.apache.commons:commons-math:2.2",
+	"org.projectlombok:lombok:1.18.30"
     ]
 }
