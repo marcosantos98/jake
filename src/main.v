@@ -81,5 +81,3 @@ fn main() {
 //	- Add include folders and files with filter options like "*".
 // 	- Fat jar support.
 //	- Add option to remove verbose output.
-//  - Include more documentation in code.
-//  - Improve command generation
