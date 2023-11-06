@@ -107,3 +107,9 @@ pub fn log(msg string) {
 pub fn log_error(msg string) {
 	eprintln(term.bright_red(msg))
 }
+
+[noreturn]
+pub fn log_fatal(msg string) {
+	eprintln(term.bright_red(msg))
+	exit(1)
+}
