@@ -23,6 +23,7 @@ pub mut:
 	libs                 []string [skip]
 	pwd                  string   [skip]
 	jar_name             string   [skip]
+	did_build            bool     [skip]
 }
 
 pub const (

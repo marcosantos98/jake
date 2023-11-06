@@ -5,7 +5,7 @@ import os
 import term { reset }
 import utils { if_bench, log, log_error }
 
-pub fn compile_srcs(jake utils.JakeProject) {
+pub fn compile_srcs(mut jake utils.JakeProject) {
 	mut b := benchmark.start()
 
 	mut classpath := '-cp ${jake.build_dir_path}'
@@ -26,6 +26,7 @@ pub fn compile_srcs(jake utils.JakeProject) {
 	}
 
 	if sources == '' {
+		jake.did_build = false
 		println('> Nothing to build.')
 		if_bench(mut b, 'Javac Command Gen')
 		return
@@ -122,11 +123,14 @@ pub fn create_jar(jake utils.JakeProject) {
 	if_bench(mut b, 'Jar Create Command Gen')
 
 	// 3. Call exec with the generated command: jar ${options}
-	cmd := 'jar ${options}'
-	log('> Creating jar file ${jake.jar_name}:')
-	println(reset('\t${cmd}'))
-	out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
-	print(out)
+	// Note: This may be causing a bottleneck.
+	if jake.did_build {
+		cmd := 'jar ${options}'
+		log('> Creating jar file ${jake.jar_name}:')
+		println(reset('\t${cmd}'))
+		out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
+		print(out)
+	}
 
 	if_bench(mut b, 'Jar Command Exec')
 }

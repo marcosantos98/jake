@@ -170,7 +170,7 @@ fn build_project(run bool, args string) {
 	mut jake_proj := load_project()
 
 	// 2. Do java stuff
-	java.compile_srcs(jake_proj)
+	java.compile_srcs(mut jake_proj)
 	java.create_jar(jake_proj)
 
 	// 3. Move the built jar to the project root directory
