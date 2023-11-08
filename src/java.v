@@ -32,6 +32,8 @@ pub fn compile_srcs(mut jake utils.JakeProject) {
 		return
 	}
 
+	jake.did_build = true
+
 	options := '${classpath} -d ${jake.build_dir_path}'
 	cmd := 'javac ${options} ${sources}'
 
