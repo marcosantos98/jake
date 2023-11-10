@@ -232,7 +232,7 @@ fn build_project(run bool, args string) {
 	}
 }
 
-fn build_and_run_project_tests() {
+fn build_and_run_project_tests(run_single bool, single_classpath string) {
 	// 1. Load project
 	mut jake_proj := load_project()
 
@@ -246,7 +246,7 @@ fn build_and_run_project_tests() {
 	java.compile_tests(jake_proj)
 
 	// 4. Run them
-	run_tests(jake_proj)
+	run_tests(jake_proj, run_single, single_classpath)
 }
 
 fn run_project(jake_proj utils.JakeProject, args string) {
@@ -276,7 +276,7 @@ fn run_project(jake_proj utils.JakeProject, args string) {
 	}
 }
 
-fn run_tests(jk utils.JakeProject) {
+fn run_tests(jk utils.JakeProject, run_single bool, single_classpath string) {
 	mut b := benchmark.start()
 
 	// 1. Check if project has testing enabled
@@ -298,10 +298,15 @@ fn run_tests(jk utils.JakeProject) {
 
 	mut tests := ''
 	// 3 . Collect tests
-	for test in jk.tests {
-		classpath := test.replace('${jk.tests_dir_path}/', '').replace('/', '.').replace('.java',
-			'')
-		tests += ' ${classpath}'
+
+	if run_single {
+		tests += ' ${single_classpath}'
+	} else {
+		for test in jk.tests {
+			classpath := test.replace('${jk.tests_dir_path}/', '').replace('/', '.').replace('.java',
+				'')
+			tests += ' ${classpath}'
+		}
 	}
 
 	cmd += tests
