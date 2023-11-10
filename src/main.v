@@ -18,8 +18,10 @@ import utils { if_bench }
 // jake run <args>
 //	Run the project
 //		args - arguments passed to java
-// jake test
+// jake test [options]
 //	Build and test
+//  Options:
+//		single <classpath> - Run single test with given classpath. e.g marco.test.Test
 // jake sym
 //	Create soft link to `/usr/local/bin`
 fn main() {
@@ -66,6 +68,17 @@ fn main() {
 				description: 'Prepare and run tests'
 				execute: jake.test
 				disable_man: true
+				commands: [
+					Command{
+						name: 'run'
+						description: 'Run single test with given classpath. e.g marco.test.Test'
+						usage: '<classpath>'
+						execute: jake.testsingle
+						required_args: 1
+						disable_man: true
+						disable_flags: true
+					},
+				]
 			},
 			Command{
 				name: 'sym'

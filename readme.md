@@ -51,16 +51,18 @@ jake
 jake init
     Create jakefile.json with user input and setup project structure
 jake build [options]
-	Build the current project
-	Options:
-		run <args> - Run the project after build with given args
+    Build the current project
+    Options:
+	    run <args> - Run the project after build with given args
 jake run <args>
-	Run the project
-		args - arguments passed to java
-jake test
-	Build and test
+    Run the project
+	    args - arguments passed to java
+jake test [options]
+    Build and test
+    Options:
+	    run <classpath> - Run single test with given classpath. e.g marco.test.Test
 jake sym
-	Create soft link to `/usr/local/bin`
+    Create soft link to `/usr/local/bin`
 ```
 
 ### TODO:
