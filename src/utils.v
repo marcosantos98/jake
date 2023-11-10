@@ -23,6 +23,7 @@ pub mut:
 	libs                 []string [skip]
 	pwd                  string   [skip]
 	jar_name             string   [skip]
+	did_build            bool     [skip]
 }
 
 pub const (
@@ -106,4 +107,10 @@ pub fn log(msg string) {
 
 pub fn log_error(msg string) {
 	eprintln(term.bright_red(msg))
+}
+
+[noreturn]
+pub fn log_fatal(msg string) {
+	eprintln(term.bright_red(msg))
+	exit(1)
 }

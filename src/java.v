@@ -5,7 +5,7 @@ import os
 import term { reset }
 import utils { if_bench, log, log_error }
 
-pub fn compile_srcs(jake utils.JakeProject) {
+pub fn compile_srcs(mut jake utils.JakeProject) {
 	mut b := benchmark.start()
 
 	mut classpath := '-cp ${jake.build_dir_path}'
@@ -26,10 +26,13 @@ pub fn compile_srcs(jake utils.JakeProject) {
 	}
 
 	if sources == '' {
+		jake.did_build = false
 		println('> Nothing to build.')
 		if_bench(mut b, 'Javac Command Gen')
 		return
 	}
+
+	jake.did_build = true
 
 	options := '${classpath} -d ${jake.build_dir_path}'
 	cmd := 'javac ${options} ${sources}'
@@ -91,7 +94,14 @@ pub fn compile_tests(jake utils.JakeProject) {
 pub fn create_jar(jake utils.JakeProject) {
 	mut b := benchmark.start()
 	// 1. Cleanup old .class files that don't exist in .java form.
-	for built_source in os.walk_ext(jake.build_dir_path, 'class') {
+	classes := os.walk_ext(jake.build_dir_path, 'class')
+
+	if classes.len == 0 {
+		// fixme 23/10/29: This should check in the future for includes
+		return
+	}
+
+	for built_source in classes {
 		src := built_source.replace('.class', '.java').replace(jake.build_dir_path, jake.src_dir_path)
 		if built_source.contains('$') {
 			if !os.exists(src.split('$')[0] + '.java') {
@@ -115,11 +125,14 @@ pub fn create_jar(jake utils.JakeProject) {
 	if_bench(mut b, 'Jar Create Command Gen')
 
 	// 3. Call exec with the generated command: jar ${options}
-	cmd := 'jar ${options}'
-	log('> Creating jar file ${jake.jar_name}:')
-	println(reset('\t${cmd}'))
-	out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
-	print(out)
+	// Note: This may be causing a bottleneck.
+	if jake.did_build {
+		cmd := 'jar ${options}'
+		log('> Creating jar file ${jake.jar_name}:')
+		println(reset('\t${cmd}'))
+		out, _ := utils.execute_in_dir(cmd, jake.build_dir_path)
+		print(out)
+	}
 
 	if_bench(mut b, 'Jar Command Exec')
 }

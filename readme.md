@@ -47,7 +47,9 @@ sudo ./jake sym
 
 ```
 jake
-    Fast path to `jake build`
+	Fast path to `jake build`
+jake init
+    Create jakefile.json with user input and setup project structure
 jake build [options]
     Build the current project
     Options:
@@ -58,7 +60,7 @@ jake run <args>
 jake test [options]
     Build and test
     Options:
-	    single <classpath> - Run single test with given classpath. e.g marco.test.Test
+	    run <classpath> - Run single test with given classpath. e.g marco.test.Test
 jake sym
     Create soft link to `/usr/local/bin`
 ```
@@ -69,6 +71,7 @@ Check the end of `main.v` to know what is planned to be added to the project in 
 
 ### Current features:
 
+- Create project with simple command `jake init`
 - Gather all the `.java` files and build them into a single jar file with `jake build`
 - Run the final jar with `jake run` or `jake build run`
   - Can also specify args for the final jar with `jake build run [args]` or `jake run [args]`
