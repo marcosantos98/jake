@@ -51,14 +51,16 @@ jake
 jake build [options]
     Build the current project
     Options:
-        run <args> - Run the project after build with given args
+	    run <args> - Run the project after build with given args
 jake run <args>
     Run the project
-        args - arguments passed to java
-jake test
+	    args - arguments passed to java
+jake test [options]
     Build and test
+    Options:
+	    single <classpath> - Run single test with given classpath. e.g marco.test.Test
 jake sym
-    Create a soft link to `/usr/local/bin`
+    Create soft link to `/usr/local/bin`
 ```
 
 ### TODO:

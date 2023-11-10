@@ -14,8 +14,10 @@ import os
 // jake run <args>
 //	Run the project
 //		args - arguments passed to java
-// jake test
+// jake test [options]
 //	Build and test
+//  Options:
+//		single <classpath> - Run single test with given classpath. e.g marco.test.Test
 // jake sym
 //	Create soft link to `/usr/local/bin`
 fn main() {
