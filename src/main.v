@@ -55,6 +55,17 @@ fn main() {
 				description: 'Prepare and run tests'
 				execute: jake.test
 				disable_man: true
+				commands: [
+					Command{
+						name: 'run'
+						description: 'Run single test with given classpath. e.g marco.test.Test'
+						usage: '<classpath>'
+						execute: jake.testsingle
+						required_args: 1
+						disable_man: true
+						disable_flags: true
+					},
+				]
 			},
 			Command{
 				name: 'sym'

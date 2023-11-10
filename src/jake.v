@@ -26,7 +26,14 @@ pub fn run(cmd Command) ! {
 
 // jake test
 pub fn test(cmd Command) ! {
-	build_and_run_project_tests()
+	build_project(false, '')
+	build_and_run_project_tests(false, '')
+}
+
+// jake test single
+pub fn testsingle(cmd Command) ! {
+	build_project(false, '')
+	build_and_run_project_tests(true, cmd.args[0])
 }
 
 // jake sym
