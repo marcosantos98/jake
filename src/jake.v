@@ -399,8 +399,14 @@ fn process_mvn_obj(mvn_obj mvn.MavenObj, repo string, mut jk utils.JakeProject) 
 					dep_artifact_id_tag := try_parse_property(dep.get_tags(jake.artifact_id_tag)[0].text(), doc)
 
 					// fixme 23/10/31: parse all version specifications
-					dep_version_tag := try_parse_property(dep.get_tags(jake.version_tag)[0].text(), doc)
+					mut dep_version_tag := try_parse_property(dep.get_tags(jake.version_tag)[0].text(), doc)
 					// vfmt on
+
+					if dep_version_tag.starts_with('[') {
+						// Use first version available. Not the right way to do it btw.
+						dep_version_tag = dep_version_tag.substr(1, dep_version_tag.index_after(',',
+							1))
+					}
 
 					// 1.1 Try resolve the dependency.
 					dependency_mvn_obj := mvn.MavenObj{
@@ -410,7 +416,7 @@ fn process_mvn_obj(mvn_obj mvn.MavenObj, repo string, mut jk utils.JakeProject) 
 					}
 
 					if !process_mvn_obj(dependency_mvn_obj, repo, mut jk) {
-						log_fatal('Couldnt resolve dependency: ${dependency_mvn_obj.to_name(.jar)}')
+						log_fatal('Couldnt resolve dependency: ${dependency_mvn_obj.to_name(.jar)} for ${mvn_obj.to_name(.jar)}')
 					}
 				}
 			}
