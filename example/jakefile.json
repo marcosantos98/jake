@@ -8,6 +8,7 @@
     ],
     "deps": [
         "org.apache.commons:commons-math:2.2",
-	"org.projectlombok:lombok:1.18.30"
+	"org.projectlombok:lombok:1.18.30",
+	"com.github.stefanbirkner:system-rules:1.19.0"
     ]
 }
